@@ -1,0 +1,597 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@fontsource/open-sans/index.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* Custom config */
+
+@theme {
+  /* Colors */
+  --color-primary: #106aaa;
+  --color-secondary: #003357;
+  --color-tertiary: #1270b3;
+  --color-accent: #027e01;
+  --color-whitebg: #f5f2ee;
+  /* Fonts */
+  --font-openSans: "Open Sans", sans-serif;
+}
+
+/* Default settings */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+
+  /* Títulos globales */
+  .titulo-principal {
+    @apply text-[24px] md:text-[30px] font-bold text-center mb-6 text-gray-800;
+  }
+
+  .subtitulo {
+    @apply text-xl font-semibold mb-4 text-gray-700;
+  }
+
+  /* NavBar */
+  .NavigationMenu {
+    @apply p-2 bg-primary max-w-full text-white sticky top-0 z-50;
+  }
+
+  .NavigationMenuList {
+    @apply w-full flex justify-between h-14;
+  }
+
+  .Logo {
+    @apply p-1 w-[150px] ;
+  }
+
+  .TrigerMenu {
+    @apply p-0 m-0 bg-transparent hover:bg-transparent focus:bg-transparent active:bg-transparent shadow-none ring-0 outline-none;
+  }
+
+  .MenuAbierto {
+    @apply text-white right-0 top-0 z-50 bg-secondary w-60 whitespace-nowrap shadow-md;
+  }
+
+  .OpcionMenu {
+    @apply text-white block text-left hover:bg-tertiary hover:text-white w-full;
+  }
+
+  /* RECIBO */
+  .recibo-titulo {
+    @apply font-bold;
+    background: linear-gradient(45deg, #2196F3 30%, #21CBF3 90%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: clamp(16px, 4vw, 22px);
+  }
+
+  .recibo-titulo-container {
+    @apply hidden sm:block;
+  }
+
+  .recibo-main {
+    @apply p-2 w-full flex flex-col justify-center items-center;
+  }
+
+  .recibo-container {
+    @apply flex items-center flex-col justify-center mb-10 max-w-[800px] w-full mx-auto text-[8px] sm:text-[10px] md:text-[12px];
+  }
+
+  .recibo-header-grid {
+    @apply grid w-full text-center border-l border-r border-t border-gray-500 pr-1;
+    grid-template-columns: 2.666fr 4.667fr 4.667fr;
+  }
+
+  .recibo-logo-container {
+    @apply truncate overflow-hidden whitespace-nowrap flex justify-center;
+  }
+
+  .recibo-logo {
+    @apply w-[100px] object-contain;
+  }
+
+  .recibo-empresa-info {
+    @apply truncate overflow-hidden whitespace-nowrap flex flex-col gap-1 text-left pl-1 justify-center;
+  }
+
+  .recibo-proyecto {
+    @apply truncate overflow-hidden whitespace-nowrap text-right;
+  }
+
+  .recibo-datos-grid {
+    @apply grid w-full text-center border-l border-r border-t border-gray-500;
+    grid-template-columns: 2.666fr 4fr 2.666fr 2.666fr;
+  }
+
+  .recibo-datos-header {
+    @apply border-r border-gray-500 truncate overflow-hidden whitespace-nowrap bg-accent text-white;
+  }
+
+  .recibo-datos-header-last {
+    @apply truncate overflow-hidden whitespace-nowrap bg-accent text-white;
+  }
+
+  .recibo-datos-valor {
+    @apply border-r border-gray-500 truncate overflow-hidden whitespace-nowrap;
+  }
+
+  .recibo-datos-valor-bold {
+    @apply border-r border-gray-500 truncate overflow-hidden whitespace-nowrap font-bold;
+  }
+
+  .recibo-datos-valor-last {
+    @apply truncate overflow-hidden whitespace-nowrap;
+  }
+
+  .recibo-info-grid {
+    @apply grid w-full text-center border-l border-r border-t border-gray-500;
+    grid-template-columns: 2.5fr 3.266fr 3.266fr 3.266fr;
+  }
+
+  .recibo-conceptos-header {
+    @apply grid grid-cols-12 w-full text-center;
+  }
+
+  .recibo-concepto-titulo {
+    @apply col-span-4 border-t border-l border-b border-r border-gray-500 truncate bg-accent text-white;
+  }
+
+  .recibo-concepto-codigo {
+    @apply col-span-1 border-t border-b border-r border-gray-500 truncate bg-accent text-white;
+  }
+
+  .recibo-concepto-unidades {
+    @apply col-span-1 border-t border-b border-r border-gray-500 truncate bg-accent text-white;
+  }
+
+  .recibo-concepto-valor {
+    @apply col-span-2 border-t border-b border-r border-gray-500 truncate bg-accent text-white;
+  }
+
+  .recibo-concepto-valor-last {
+    @apply col-span-2 border-t border-r border-b border-gray-500 truncate bg-accent text-white;
+  }
+
+  .recibo-fila {
+    @apply grid grid-cols-12 w-full;
+  }
+
+  .recibo-fila-concepto {
+    @apply col-span-4 border-l border-r border-gray-500 truncate overflow-hidden whitespace-nowrap pl-1;
+  }
+
+  .recibo-fila-codigo {
+    @apply col-span-1 border-r border-gray-500 truncate overflow-hidden whitespace-nowrap pl-1 pr-1 text-center;
+  }
+
+  .recibo-fila-unidades {
+    @apply col-span-1 border-r border-gray-500 truncate overflow-hidden whitespace-nowrap text-right pr-1;
+  }
+
+  .recibo-fila-valor {
+    @apply col-span-2 border-r border-gray-500 truncate overflow-hidden whitespace-nowrap text-right pr-1;
+  }
+
+  .recibo-forma-pago {
+    @apply grid grid-cols-12 w-full border border-gray-500;
+  }
+
+  .recibo-forma-pago-info {
+    @apply col-span-6 border-r border-gray-500 truncate overflow-hidden whitespace-nowrap pl-1;
+  }
+
+  .recibo-totales {
+    @apply col-span-6 truncate;
+  }
+
+  .recibo-totales-titulo {
+    @apply text-center font-bold bg-gray-200 border-b border-gray-500;
+  }
+
+  .recibo-totales-grid {
+    @apply grid grid-cols-6 w-full text-center;
+  }
+
+  .recibo-totales-header {
+    @apply col-span-2 border-r border-gray-500 truncate bg-accent text-white;
+  }
+
+  .recibo-totales-header-last {
+    @apply col-span-2 truncate bg-accent text-white;
+  }
+
+  .recibo-totales-valores {
+    @apply grid grid-cols-6 w-full text-center border-t border-gray-500;
+  }
+
+  .recibo-totales-valor {
+    @apply col-span-2 border-r border-gray-500 truncate text-right pr-1;
+  }
+
+  .recibo-totales-valor-last {
+    @apply col-span-2 truncate text-right pr-1;
+  }
+
+  .recibo-pie {
+    @apply grid grid-cols-12 w-full border-r border-l border-r border-gray-500;
+  }
+
+  .recibo-pie-lugar {
+    @apply col-span-6 border-gray-500 pl-1 truncate overflow-hidden whitespace-nowrap;
+  }
+
+  .recibo-pie-fecha {
+    @apply col-span-2 border-r border-gray-500 truncate overflow-hidden whitespace-nowrap text-center;
+  }
+
+  .recibo-pie-neto-label {
+    @apply col-span-2 border-r border-gray-500 truncate overflow-hidden whitespace-nowrap text-center;
+  }
+
+  .recibo-pie-neto-valor {
+    @apply col-span-2 truncate overflow-hidden whitespace-nowrap text-right pr-1;
+  }
+
+  .recibo-letras {
+    @apply grid grid-cols-12 w-full border border-gray-500;
+  }
+
+  .recibo-letras-texto {
+    @apply col-span-12 pl-1 truncate overflow-hidden whitespace-nowrap;
+  }
+
+  .recibo-observaciones {
+    @apply grid grid-cols-12 w-full border-r border-l border-b border-gray-500;
+  }
+
+  .recibo-observaciones-izq {
+    @apply col-span-6 border-r border-gray-500 truncate overflow-hidden whitespace-nowrap;
+  }
+
+  .recibo-observaciones-titulo {
+    @apply text-left pl-1 pr-1 h-10 sm:h-20;
+  }
+
+  .recibo-deposito-titulo {
+    @apply col-span-3 pl-1 truncate overflow-hidden whitespace-nowrap bg-gray-200;
+  }
+
+  .recibo-deposito-grid {
+    @apply grid grid-cols-3 w-full text-center border-t border-gray-500;
+  }
+
+  .recibo-deposito-header {
+    @apply border-r border-gray-500 truncate overflow-hidden whitespace-nowrap;
+  }
+
+  .recibo-deposito-header-last {
+    @apply truncate overflow-hidden whitespace-nowrap;
+  }
+
+  .recibo-deposito-valor {
+    @apply border-r border-t border-gray-500 truncate overflow-hidden whitespace-nowrap;
+  }
+
+  .recibo-deposito-valor-last {
+    @apply truncate overflow-hidden whitespace-nowrap border-t border-gray-500;
+  }
+
+  .recibo-firma {
+    @apply col-span-6;
+  }
+
+  .recibo-firma-container {
+    @apply flex flex-col justify-end items-center h-full;
+  }
+
+  .recibo-firma-linea {
+    @apply flex justify-center w-full;
+  }
+
+  .recibo-firma-hr {
+    @apply border-t border-black/30 w-30 sm:w-40;
+  }
+
+  .recibo-firma-texto {
+    @apply font-bold;
+  }
+
+  .recibo-firma-nota {
+    @apply text-[5.5px] sm:text-[9px] text-center pl-1 pr-1;
+  }
+
+  /* Leyes Laborales */
+  .leyes-laborales-container {
+    @apply max-w-4xl mx-auto px-4 py-10;
+  }
+
+  .leyes-laborales-titulo {
+    @apply text-3xl font-bold mb-6 text-center;
+  }
+
+  .leyes-laborales-busqueda {
+    @apply mb-8;
+  }
+
+  .leyes-laborales-lista {
+    @apply space-y-6;
+  }
+
+  .leyes-laborales-card {
+    @apply shadow-md;
+  }
+
+  .leyes-laborales-card-contenido {
+    @apply p-6;
+  }
+
+  .leyes-laborales-subtitulo {
+    @apply text-xl font-semibold mb-2;
+  }
+
+  .leyes-laborales-texto {
+    @apply text-gray-700 whitespace-pre-line;
+  }
+
+  .leyes-laborales-boton-container {
+    @apply mt-4 ;
+  }
+
+  .leyes-laborales-sin-resultados {
+    @apply text-center text-gray-500;
+  }
+
+  /* Estilos para la vista de Operarios */
+  .operarios-container {
+    @apply w-full pt-[40px] px-4 md:px-6;
+  }
+
+  .operarios-header {
+    @apply mb-8;
+  }
+
+  .operarios-titulo {
+    @apply text-center text-[24px] md:text-[30px] font-bold text-gray-900 mb-6;
+  }
+
+  .operarios-busqueda {
+    @apply flex flex-col md:flex-row gap-4 mb-6;
+  }
+
+  .operarios-input-busqueda {
+    @apply relative flex-1;
+  }
+
+  .operarios-input {
+    @apply w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  }
+
+  .operarios-select {
+    @apply px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  }
+
+  .operarios-tabla {
+    @apply bg-white rounded-lg shadow-md overflow-hidden;
+  }
+
+  .operarios-tabla-header {
+    @apply bg-gray-50 border-b;
+  }
+
+  .operarios-tabla-header th {
+    @apply px-6 py-4 text-left text-sm font-semibold text-gray-600;
+  }
+
+  .operarios-tabla-body {
+    @apply divide-y divide-gray-200;
+  }
+
+  .operarios-tabla-fila {
+    @apply hover:bg-gray-50;
+  }
+
+  .operarios-tabla-celda {
+    @apply px-6 py-4;
+  }
+
+  .operarios-legajo {
+    @apply flex items-center gap-2;
+  }
+
+  .operarios-legajo-avatar {
+    @apply w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-medium;
+  }
+
+  .operarios-legajo-numero {
+    @apply text-gray-900;
+  }
+
+  .operarios-info {
+    @apply flex items-center gap-3;
+  }
+
+  .operarios-info-avatar {
+    @apply w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center;
+  }
+
+  .operarios-info-nombre {
+    @apply font-medium text-gray-900;
+  }
+
+  .operarios-info-categoria {
+    @apply text-sm text-gray-500;
+  }
+
+  .operarios-estado {
+    @apply px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .operarios-estado-activo {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .operarios-estado-inactivo {
+    @apply bg-red-100 text-red-800;
+  }
+
+  .operarios-boton {
+    @apply bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2;
+  }
+
+  .operarios-mobile {
+    @apply flex flex-col gap-4 md:hidden;
+  }
+
+  .operarios-mobile-card {
+    @apply bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow;
+  }
+
+  .operarios-mobile-header {
+    @apply flex items-center justify-between mb-3;
+  }
+
+  .operarios-mobile-info {
+    @apply flex items-center;
+  }
+
+  .operarios-mobile-avatar {
+    @apply w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-3;
+  }
+
+  .operarios-mobile-nombre {
+    @apply text-lg font-semibold text-gray-800;
+  }
+
+  .operarios-mobile-legajo {
+    @apply text-sm text-gray-600;
+  }
+
+  .operarios-mobile-grid {
+    @apply grid grid-cols-2 gap-2 mb-3 text-sm text-gray-600;
+  }
+
+  .operarios-mobile-label {
+    @apply font-medium;
+  }
+
+  .operarios-desktop {
+    @apply hidden md:block;
+  }
+}
