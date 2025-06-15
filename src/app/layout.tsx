@@ -13,11 +13,11 @@ export const metadata = {
     description:
       "SIPPA es un sistema de gestión de recursos humanos que permite administrar operarios y personal administrativo, así como generar, visualizar y gestionar recibos de sueldo de manera eficiente.",
 
-    url: "https://sippa-six.vercel.app",
+    url: "https://sippa-two.vercel.app",
     type: "website",
     images: [
       {
-        url: "https://sippa-six.vercel.app/Img/sippalogo.webp",
+        url: "https://sippa-two.vercel.app/Img/sippalogo.webp",
         width: 1200,
         height: 630,
         alt: "Vista previa de SIPPA",
@@ -30,7 +30,7 @@ export const metadata = {
     description:
       "SIPPA es un sistema de gestión de recursos humanos que permite administrar operarios y personal administrativo, así como generar, visualizar y gestionar recibos de sueldo de manera eficiente.",
 
-    images: ["https://sippa-six.vercel.app/Img/sippalogo.webp"],
+    images: ["https://sippa-two.vercel.app/Img/sippalogo.webp"],
   },
 };
 
