@@ -297,7 +297,7 @@ export default function PerfilOperario() {
   const [tabValue, setTabValue] = useState(0);
   const [openRecibo, setOpenRecibo] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [reciboToDelete, setReciboToDelete] = useState<number | null>(null);
+  const [reciboToDelete, setReciboToDelete] = useState<number | { legajo: string; periodo: string; fecha: string } | null>(null);
   const [historialRecibos, setHistorialRecibos] = useState<Recibo[]>([]);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openAusenciaDialog, setOpenAusenciaDialog] = useState(false);
@@ -354,6 +354,25 @@ export default function PerfilOperario() {
     try {
       console.log('Buscando operario con legajo:', params.legajo);
       
+      // Función temporal para limpiar localStorage
+      if (typeof window !== 'undefined') {
+        (window as any).limpiarOperarios = () => {
+          localStorage.removeItem('operarios');
+          localStorage.removeItem('historialRecibos');
+          console.log('✅ localStorage limpiado. Recarga la página.');
+          window.location.reload();
+        };
+        console.log('💡 Para limpiar localStorage, ejecuta en consola: limpiarOperarios()');
+        
+        // También agregar función global inmediatamente
+        (window as any).limpiarOperarios = () => {
+          localStorage.removeItem('operarios');
+          localStorage.removeItem('historialRecibos');
+          console.log('✅ localStorage limpiado. Recarga la página.');
+          window.location.reload();
+        };
+      }
+      
       // Primero intentar obtener del localStorage
       const operariosGuardados = JSON.parse(
         localStorage.getItem("operarios") || "[]"
@@ -373,6 +392,15 @@ export default function PerfilOperario() {
       console.log('Operario encontrado:', operarioEncontrado);
 
       if (operarioEncontrado) {
+        // Función para obtener fecha actual en formato DD/MM/YYYY
+        const getFechaActual = () => {
+          const ahora = new Date();
+          const dia = String(ahora.getDate()).padStart(2, '0');
+          const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+          const año = ahora.getFullYear();
+          return `${dia}/${mes}/${año}`;
+        };
+
         const operarioConValores: OperarioDetalle = {
           ...operarioEncontrado,
           estado: operarioEncontrado.estado as "activo" | "inactivo",
@@ -396,6 +424,8 @@ export default function PerfilOperario() {
           legajo: operarioEncontrado.legajo,
           curriculum: operarioEncontrado.curriculum || defaultPDFs.curriculum,
           titulo: operarioEncontrado.titulo || defaultPDFs.titulo,
+          // Inicializar historial completamente vacío
+          historial: initializeHistorial(),
         };
         
         setOperario(operarioConValores);
@@ -428,8 +458,17 @@ export default function PerfilOperario() {
     router.push("/recibo");
   };
 
-  const handleEliminarRecibo = (index: number) => {
-    setReciboToDelete(index);
+  const handleEliminarRecibo = (recibo: Recibo) => {
+    // Si el recibo tiene id, usar el id; si no, usar información única del recibo
+    if (recibo.id) {
+      setReciboToDelete(recibo.id);
+    } else {
+      setReciboToDelete({
+        legajo: recibo.legajo || '',
+        periodo: recibo.periodo,
+        fecha: recibo.fecha
+      });
+    }
     setOpenDeleteDialog(true);
   };
 
@@ -440,18 +479,24 @@ export default function PerfilOperario() {
         localStorage.getItem("historialRecibos") || "[]"
       );
 
-      // Encontrar el índice del recibo a eliminar en el array completo
+      // Buscar el índice del recibo a eliminar
       let reciboIndex = -1;
-      let currentOperarioIndex = -1;
-
-      todosLosRecibos.forEach((recibo: any, index: number) => {
-        if (recibo.legajo === operario?.legajo.toString()) {
-          currentOperarioIndex++;
-          if (currentOperarioIndex === reciboToDelete) {
-            reciboIndex = index;
-          }
-        }
-      });
+      
+      // Si reciboToDelete es un número (id), buscar por id
+      if (typeof reciboToDelete === 'number') {
+        reciboIndex = todosLosRecibos.findIndex(
+          (recibo: any) => recibo.id === reciboToDelete && recibo.legajo === operario?.legajo.toString()
+        );
+      } else {
+        // Si reciboToDelete es un objeto con información del recibo, buscar por combinación única
+        const reciboInfo = reciboToDelete as { legajo: string; periodo: string; fecha: string };
+        reciboIndex = todosLosRecibos.findIndex(
+          (recibo: any) => 
+            recibo.legajo === reciboInfo.legajo && 
+            recibo.periodo === reciboInfo.periodo && 
+            recibo.fecha === reciboInfo.fecha
+        );
+      }
 
       if (reciboIndex !== -1) {
         // Eliminar el recibo del array
@@ -511,11 +556,52 @@ export default function PerfilOperario() {
     // Obtener todos los operarios del localStorage
     const operariosGuardados = JSON.parse(localStorage.getItem("operarios") || "[]");
 
+    // Verificar si la categoría cambió
+    const categoriaCambio = editFormData.categoria && editFormData.categoria !== operario.categoria;
+    
     // Crear el operario actualizado
     const operarioActualizado = {
       ...operario,
       ...editFormData
     };
+
+    // Si la categoría cambió, crear un registro de ascenso automáticamente
+    if (categoriaCambio) {
+      // Obtener fecha actual real del sistema en formato YYYY-MM-DD
+      const ahora = new Date();
+      const dia = String(ahora.getDate()).padStart(2, '0');
+      const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+      const año = ahora.getFullYear();
+      const fechaActual = `${año}-${mes}-${dia}`; // YYYY-MM-DD
+      
+      const nuevoAscenso = {
+        fecha: fechaActual,
+        cargo: editFormData.categoria!,
+        departamento: editFormData.sector || operario.sector || "No especificado"
+      };
+      
+      console.log('Nuevo ascenso creado con fecha forzada:', nuevoAscenso);
+
+      // Inicializar historial si no existe
+      if (!operarioActualizado.historial) {
+        operarioActualizado.historial = initializeHistorial();
+      }
+
+      // Agregar el nuevo ascenso al historial
+      operarioActualizado.historial.ascensos.push(nuevoAscenso);
+      
+      // Debug: Verificar que se guardó correctamente
+      console.log('Nuevo ascenso creado:', nuevoAscenso);
+      console.log('Historial actualizado:', operarioActualizado.historial.ascensos);
+      
+      // Verificar que se guardó en localStorage
+      setTimeout(() => {
+        const operariosGuardadosDespues = JSON.parse(localStorage.getItem("operarios") || "[]");
+        const operarioGuardado = operariosGuardadosDespues.find((op: any) => op.legajo === operario.legajo);
+        console.log('Operario guardado en localStorage:', operarioGuardado);
+        console.log('Ascensos en localStorage:', operarioGuardado?.historial?.ascensos);
+      }, 100);
+    }
 
     // Actualizar el operario en la lista
     const operariosActualizados = operariosGuardados.map((op: OperarioDetalle) =>
@@ -777,8 +863,18 @@ export default function PerfilOperario() {
     if (!operario) return;
 
     const operariosGuardados = JSON.parse(localStorage.getItem("operarios") || "[]");
+    
+    // Usar la fecha seleccionada en el formulario o la fecha actual si no se seleccionó
+    const fechaParaUsar = ascensoFormData.fecha || (() => {
+      const ahora = new Date();
+      const dia = String(ahora.getDate()).padStart(2, '0');
+      const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+      const año = ahora.getFullYear();
+      return `${año}-${mes}-${dia}`; // YYYY-MM-DD
+    })();
+    
     const nuevoAscenso = {
-      fecha: ascensoFormData.fecha,
+      fecha: fechaParaUsar,
       cargo: ascensoFormData.cargo,
       departamento: ascensoFormData.departamento
     };
@@ -793,6 +889,14 @@ export default function PerfilOperario() {
       }
       operarioActualizado.historial.ascensos.push(nuevoAscenso);
 
+      // Actualizar la categoría del operario con el nuevo cargo
+      operarioActualizado.categoria = ascensoFormData.cargo as OperarioDetalle['categoria'];
+      
+      // Actualizar el sector si se proporcionó un departamento
+      if (ascensoFormData.departamento) {
+        operarioActualizado.sector = ascensoFormData.departamento;
+      }
+
       const operariosActualizados = operariosGuardados.map((op: OperarioDetalle) =>
         op.legajo === operario.legajo ? operarioActualizado : op
       );
@@ -800,6 +904,8 @@ export default function PerfilOperario() {
 
       setOperario({
         ...operario,
+        categoria: ascensoFormData.cargo as OperarioDetalle['categoria'],
+        sector: ascensoFormData.departamento || operario.sector,
         historial: {
           ausencias: operario.historial?.ausencias || [],
           suspensiones: operario.historial?.suspensiones || [],
@@ -2133,128 +2239,130 @@ export default function PerfilOperario() {
                           message="El operario no registra ascensos" 
                         />
                       ) : (
-                        operario.historial.ascensos.map((ascenso, index) => (
-                          <Box
-                            key={index}
-                            sx={{
-                              p: 4,
-                              borderRadius: "16px",
-                              backgroundColor: "white",
-                              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
-                              border: "1px solid",
-                              borderColor: "rgba(0, 0, 0, 0.08)",
-                              transition: "all 0.3s ease",
-                              "&:hover": {
-                                transform: "translateY(-4px)",
-                                boxShadow: "0 8px 30px rgba(0, 0, 0, 0.12)",
-                              },
-                            }}
-                          >
+                        operario.historial.ascensos.map((ascenso, index) => {
+                          // Mostrar fecha en formato DD/MM/YYYY
+                          let fechaVisual = ascenso.fecha;
+                          if (ascenso.fecha && ascenso.fecha.includes('-')) {
+                            const [anio, mes, dia] = ascenso.fecha.split('-');
+                            fechaVisual = `${dia}/${mes}/${anio}`;
+                          }
+                          return (
                             <Box
+                              key={index}
                               sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 2,
-                                mb: 3,
+                                p: 4,
+                                borderRadius: "16px",
+                                backgroundColor: "white",
+                                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
+                                border: "1px solid",
+                                borderColor: "rgba(0, 0, 0, 0.08)",
+                                transition: "all 0.3s ease",
+                                "&:hover": {
+                                  transform: "translateY(-4px)",
+                                  boxShadow: "0 8px 30px rgba(0, 0, 0, 0.12)",
+                                },
                               }}
                             >
                               <Box
                                 sx={{
-                                  width: 48,
-                                  height: 48,
-                                  borderRadius: "12px",
-                                  backgroundColor: "info.soft",
                                   display: "flex",
                                   alignItems: "center",
-                                  justifyContent: "center",
-                                  color: "info.main",
+                                  gap: 2,
+                                  mb: 3,
                                 }}
                               >
-                                <TrendingUpIcon sx={{ fontSize: 24 }} />
-                              </Box>
-                              <Box>
-                                <Typography
-                                  variant="h6"
+                                <Box
                                   sx={{
-                                    fontWeight: 600,
-                                    color: "text.primary",
-                                    fontSize: "1.1rem",
-                                    mb: 0.5,
+                                    width: 48,
+                                    height: 48,
+                                    borderRadius: "12px",
+                                    backgroundColor: "rgba(156, 39, 176, 0.1)",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    color: "#9c27b0",
                                   }}
                                 >
-                                  {ascenso.cargo}
-                                </Typography>
+                                  <TrendingUpIcon sx={{ fontSize: 24 }} />
+                                </Box>
+                                <Box>
+                                  <Typography
+                                    variant="h6"
+                                    sx={{
+                                      fontWeight: 600,
+                                      color: "text.primary",
+                                      fontSize: "1.1rem",
+                                      mb: 0.5,
+                                    }}
+                                  >
+                                    {ascenso.cargo}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{
+                                      color: "text.secondary",
+                                      fontSize: "0.875rem",
+                                    }}
+                                  >
+                                    {fechaVisual}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  pt: 2,
+                                  borderTop: "1px dashed rgba(145, 158, 171, 0.24)",
+                                }}
+                              >
                                 <Typography
-                                  variant="body2"
+                                  variant="subtitle2"
                                   sx={{
                                     color: "text.secondary",
                                     fontSize: "0.875rem",
+                                    fontWeight: 500,
                                   }}
                                 >
-                                  {new Date(ascenso.fecha).toLocaleDateString(
-                                    "es-AR",
-                                    {
-                                      weekday: "long",
-                                      year: "numeric",
-                                      month: "long",
-                                      day: "numeric",
-                                    }
-                                  )}
+                                  Sector
                                 </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                  <Chip
+                                    label={ascenso.departamento}
+                                    sx={{
+                                      borderRadius: "8px",
+                                      fontWeight: 600,
+                                      fontSize: "0.75rem",
+                                      py: 0.5,
+                                      px: 1,
+                                      backgroundColor: "#9c27b0",
+                                      color: "white",
+                                      "&:hover": {
+                                        backgroundColor: "#7b1fa2",
+                                      },
+                                    }}
+                                  />
+                                  <IconButton
+                                    onClick={() => {
+                                      setItemToDelete({ type: 'ascenso', index });
+                                      setOpenDeleteHistorialDialog(true);
+                                    }}
+                                    size="small"
+                                    sx={{
+                                      color: "#9c27b0",
+                                      "&:hover": {
+                                        backgroundColor: "rgba(156, 39, 176, 0.1)",
+                                      },
+                                    }}
+                                  >
+                                    <DeleteIcon fontSize="small" />
+                                  </IconButton>
+                                </Box>
                               </Box>
                             </Box>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                pt: 2,
-                                borderTop: "1px dashed rgba(145, 158, 171, 0.24)",
-                              }}
-                            >
-                              <Typography
-                                variant="subtitle2"
-                                sx={{
-                                  color: "text.secondary",
-                                  fontSize: "0.875rem",
-                                  fontWeight: 500,
-                                }}
-                              >
-                                Departamento
-                              </Typography>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Chip
-                                  label={ascenso.departamento}
-                                  color="info"
-                                  variant="filled"
-                                  size="small"
-                                  sx={{
-                                    borderRadius: "8px",
-                                    fontWeight: 600,
-                                    fontSize: "0.75rem",
-                                    py: 0.5,
-                                    px: 1,
-                                  }}
-                                />
-                                <IconButton
-                                  onClick={() => {
-                                    setItemToDelete({ type: 'ascenso', index });
-                                    setOpenDeleteHistorialDialog(true);
-                                  }}
-                                  size="small"
-                                  sx={{
-                                    color: "info.main",
-                                    "&:hover": {
-                                      backgroundColor: "info.lighter",
-                                    },
-                                  }}
-                                >
-                                  <DeleteIcon fontSize="small" />
-                                </IconButton>
-                              </Box>
-                            </Box>
-                          </Box>
-                        ))
+                          );
+                        })
                       )}
                     </Box>
                   </TabPanel>
@@ -2569,7 +2677,7 @@ export default function PerfilOperario() {
                                       <IconButton
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          handleEliminarRecibo(index);
+                                          handleEliminarRecibo(recibo);
                                         }}
                                         size="small"
                                         sx={{
@@ -3241,11 +3349,11 @@ export default function PerfilOperario() {
                 </Select>
               </FormControl>
               <FormControl fullWidth>
-                <InputLabel>Departamento</InputLabel>
+                <InputLabel>Sector</InputLabel>
                 <Select
                   value={ascensoFormData.departamento}
                   onChange={(e) => handleAscensoFormChange("departamento", e.target.value)}
-                  label="Departamento"
+                  label="Sector"
                 >
                   {departamentos.map((departamento) => (
                     <MenuItem key={departamento} value={departamento}>

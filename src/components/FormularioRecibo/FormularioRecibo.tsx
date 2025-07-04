@@ -176,6 +176,7 @@ const FormularioRecibo = ({ onSubmit, initialData, disableAfiliado = false, lega
     // Guardar en localStorage
     const historialRecibos = JSON.parse(localStorage.getItem('historialRecibos') || '[]');
     const nuevoRecibo = {
+      id: Date.now(), // ID único basado en timestamp
       legajo: formData.legajo,
       periodo: formData.mesAnio,
       fecha: new Date().toLocaleDateString(),

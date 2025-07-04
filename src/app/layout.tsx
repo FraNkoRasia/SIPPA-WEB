@@ -1,3 +1,4 @@
+import React from "react";
 import { FormProvider } from "@/context/FormContext";
 import "./index.css";
 import NavBar from "@/components/Navbar/Navbar";
